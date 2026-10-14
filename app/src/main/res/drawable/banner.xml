@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 320x180 TV launcher banner: a mini board with a red-yellow diagonal. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="320dp" android:height="180dp"
+    android:viewportWidth="320" android:viewportHeight="180">
+    <path android:fillColor="#0B1020" android:pathData="M0,0h320v180h-320z" />
+    <path android:fillColor="#1E4FD8" android:pathData="M24,30h132a12,12 0 0 1 12,12v96a12,12 0 0 1 -12,12h-132a12,12 0 0 1 -12,-12v-96a12,12 0 0 1 12,-12z" />
+    <path android:fillColor="#0B1020" android:pathData="M45,60m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#FFC93C" android:pathData="M90,60m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#FF4B5C" android:pathData="M135,60m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#0B1020" android:pathData="M45,120m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#FF4B5C" android:pathData="M90,120m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#FFC93C" android:pathData="M135,120m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#FF4B5C" android:pathData="M45,90m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#FF4B5C" android:pathData="M90,90m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#FFC93C" android:pathData="M135,90m-14,0a14,14 0 1,0 28,0a14,14 0 1,0 -28,0" />
+    <path android:fillColor="#3DDC97" android:pathData="M190,70h110v8h-110z M190,90h80v8h-80z M190,110h96v8h-96z" />
+</vector>

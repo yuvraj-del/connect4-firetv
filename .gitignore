@@ -1,0 +1,17 @@
+build/
+.loop/
+.gradle/
+app/build/
+local.properties
+.idea/
+*.iml
+*.apk
+*.zip
+
+# AI agent tooling used during development (not part of the project)
+CLAUDE.md
+LOOP_LOG.md
+SPEC.md
+loop.sh
+loop-run.out
+.claude/
