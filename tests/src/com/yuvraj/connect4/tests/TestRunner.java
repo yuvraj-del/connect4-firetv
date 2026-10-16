@@ -317,6 +317,29 @@ public final class TestRunner {
             check(out[0] != null && new Board().canPlay(out[0].bestMove()), "cancelled search still returns a legal move");
         });
 
+        test("mcts.progress_every_n_iterations", () -> {
+            List<SearchResult> snaps = new ArrayList<>();
+            Board b = Board.fromMoves("44");
+            SearchResult fin = new Mcts(21).search(b, new SearchLimits(0, 3000), snaps::add, 0, 300);
+            eq(9, snaps.size(), "snapshots at 300, 600, ... 2700 iterations");
+            for (int i = 0; i < snaps.size(); i++) eq(300L * (i + 1), snaps.get(i).iterations(), "snapshot " + i + " iteration count");
+            SearchResult plain = new Mcts(21).search(b, new SearchLimits(0, 3000));
+            eq(plain.bestMove(), fin.bestMove(), "taking snapshots must not change the AI's move");
+            eq(Arrays.toString(plain.visits()), Arrays.toString(fin.visits()), "taking snapshots must not change the search");
+        });
+        test("session.ai_job_runs_in_frames", () -> {
+            GameSession s = new GameSession(GameSession.Mode.VS_AI, GameSession.Level.MEDIUM, 4);
+            s.dropAtCursor();
+            GameSession.Job j = s.aiJob();
+            List<SearchResult> frames = new ArrayList<>();
+            SearchResult r = j.runInFrames(18, frames::add);
+            check(frames.size() >= 15 && frames.size() <= 18, "expected about 18 frames, got " + frames.size());
+            long last = 0;
+            for (SearchResult f : frames) { check(f.iterations() > last, "frames must move forward"); last = f.iterations(); }
+            eq(3000L, r.iterations(), "full Medium budget still used");
+            check(s.applyAiMove(j, r), "result still applies");
+        });
+
         // =============== GAME SESSION (what the TV app drives) ===============
         test("session.cursor_skips_full_columns_and_wraps", () -> {
             GameSession s = new GameSession(GameSession.Mode.TWO_PLAYER, GameSession.Level.EASY, 1);

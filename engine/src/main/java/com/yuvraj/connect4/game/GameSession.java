@@ -42,6 +42,20 @@ public final class GameSession {
         public SearchResult run(Consumer<SearchResult> onProgress) {
             return new Mcts(seed).search(board, limits, onProgress, 60);
         }
+
+        /**
+         * Runs the search and calls onFrame with about {@code frames} evenly spaced snapshots of the real search
+         * (by iterations for the AI's fixed budget, by time for a hint), so the screen can show it thinking even
+         * when the search itself finishes in a few milliseconds.
+         */
+        public SearchResult runInFrames(int frames, Consumer<SearchResult> onFrame) {
+            if (limits.maxIterations() > 0) {
+                long every = Math.max(1, limits.maxIterations() / Math.max(1, frames));
+                return new Mcts(seed).search(board, limits, onFrame, 0, every);
+            }
+            long ms = Math.max(1, limits.timeMillis() / Math.max(1, frames));
+            return new Mcts(seed).search(board, limits, onFrame, ms, 0);
+        }
     }
 
     private final Mode mode;

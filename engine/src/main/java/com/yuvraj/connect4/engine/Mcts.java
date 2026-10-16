@@ -57,6 +57,16 @@ public final class Mcts {
     }
 
     public SearchResult search(Board root, SearchLimits limits, Consumer<SearchResult> onProgress, long progressIntervalMillis) {
+        return search(root, limits, onProgress, progressIntervalMillis, 0);
+    }
+
+    /**
+     * Like {@link #search(Board, SearchLimits, Consumer, long)}, but if {@code progressEveryIterations > 0} the progress
+     * callback fires every that-many iterations instead of on a timer. A fast search can then still be shown step by
+     * step: the TV replays these real intermediate results so people can watch the AI's estimates settle.
+     */
+    public SearchResult search(Board root, SearchLimits limits, Consumer<SearchResult> onProgress,
+                               long progressIntervalMillis, long progressEveryIterations) {
         if (limits == null || limits.timeMillis() < 0 || limits.maxIterations() < 0
                 || (limits.timeMillis() == 0 && limits.maxIterations() == 0)) {
             throw new IllegalArgumentException("need a positive time or iteration limit");
@@ -74,13 +84,19 @@ public final class Mcts {
         Board scratch = root.copy();
         nodeCount = 1;
         long iter = 0;
+        boolean byIterations = onProgress != null && progressEveryIterations > 0;
+        long sinceProgress = 0;
         while (iter < maxIter) {
+            if (byIterations && ++sinceProgress > progressEveryIterations) {
+                sinceProgress = 1;
+                onProgress.accept(snapshot(root, rootNode, iter, System.nanoTime() - start));
+            }
             if ((iter & (CHECK_EVERY - 1)) == 0) {
                 if (Thread.currentThread().isInterrupted()) break;  // cancelled: return what we have
                 if (timed || onProgress != null) {
                     long elapsed = System.nanoTime() - start;
                     if (elapsed >= budget) break;
-                    if (onProgress != null && elapsed >= nextProgress) {
+                    if (onProgress != null && !byIterations && elapsed >= nextProgress) {
                         onProgress.accept(snapshot(root, rootNode, iter, elapsed));
                         nextProgress = elapsed > Long.MAX_VALUE - interval ? Long.MAX_VALUE : elapsed + interval;
                     }

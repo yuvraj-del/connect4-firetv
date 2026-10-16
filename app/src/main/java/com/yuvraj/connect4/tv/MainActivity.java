@@ -27,6 +27,10 @@ public final class MainActivity extends Activity {
 
     /** The AI always "thinks" at least this long so players can watch the win-chance bars move. */
     private static final long MIN_THINK_MS = 900;
+    /** How many snapshots of the AI's search to show while it thinks. */
+    private static final int THINK_FRAMES = 18;
+    /** How long the AI's final estimates stay on screen before its disc drops. */
+    private static final long HOLD_RESULT_MS = 250;
 
     private final Handler ui = new Handler(Looper.getMainLooper());
     private final ExecutorService worker = Executors.newSingleThreadExecutor(r -> {
@@ -180,10 +184,26 @@ public final class MainActivity extends Activity {
         searching = true;
         view.setLive(null, true, false);
         running = worker.submit(() -> {
-            SearchResult result = job.run(snap -> ui.post(() -> {
-                if (token == searchToken) view.setLive(snap, true, false);
-            }));
-            long wait = Math.max(0, MIN_THINK_MS - (SystemClock.uptimeMillis() - t0));
+            // Real intermediate results of the search. On a slow stick they arrive spread out and show live;
+            // on a fast machine they all arrive within milliseconds, so we replay them over the thinking time.
+            java.util.List<SearchResult> frames = new java.util.ArrayList<>();
+            SearchResult result = job.runInFrames(THINK_FRAMES, snap -> {
+                frames.add(snap);
+                ui.post(() -> { if (token == searchToken) view.setLive(snap, true, false); });
+            });
+            frames.add(result);
+            long elapsed = SystemClock.uptimeMillis() - t0;
+            long replay = Math.max(0, MIN_THINK_MS - elapsed);
+            if (replay > 0) {
+                long step = replay / frames.size();
+                for (int i = 0; i < frames.size(); i++) {
+                    final SearchResult f = frames.get(i);
+                    ui.postDelayed(() -> { if (token == searchToken) view.setLive(f, true, false); }, step * i);
+                }
+            } else {
+                ui.post(() -> { if (token == searchToken) view.setLive(result, true, false); });
+            }
+            long wait = replay + HOLD_RESULT_MS;    // let the final bars (best column in lavender) sit for a moment
             ui.postDelayed(() -> {
                 if (token != searchToken) return;
                 searching = false;

@@ -8,7 +8,7 @@ local.properties
 *.apk
 *.zip
 
-# AI agent tooling used during development (not part of the project)
+# local-only files
 CLAUDE.md
 LOOP_LOG.md
 SPEC.md
