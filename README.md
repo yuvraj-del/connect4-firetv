@@ -4,7 +4,7 @@
 While the AI searches, a bar above each column shows its live chance of winning there. After every move it says what it played and how confident it is.
 
 <!-- SCREENSHOT: main gameplay shot (AI thinking, bars visible). Save it as docs/screenshots/gameplay.png, then delete the comment markers around the next line. -->
-<!-- ![Connect Four AI running on the Android TV emulator](docs/screenshots/gameplay.png) -->
+![Connect Four AI running on the Android TV emulator](docs/screenshots/gameplay.png)
 
 <!-- DEMO VIDEO: paste the YouTube link below, then delete the comment markers. -->
 <!-- **[Watch the 2-minute demo](https://youtu.be/YOUR-VIDEO-ID)** -->
