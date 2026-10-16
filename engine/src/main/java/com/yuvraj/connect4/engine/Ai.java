@@ -1,6 +1,6 @@
 package com.yuvraj.connect4.engine;
 
-/** Difficulty facade over Mcts. See SPEC.md section 3. */
+/** Simple entry point to the AI: pick a move at a difficulty level, or run a time-limited search for a hint. */
 public final class Ai {
     private final Difficulty difficulty;
     private final Mcts mcts;

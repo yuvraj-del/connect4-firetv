@@ -9,7 +9,8 @@ import java.util.*;
 import java.util.concurrent.*;
 
 /**
- * Dependency-free test suite for the engine. This file is the contract: agents must not edit it.
+ * Dependency-free test suite for the engine and game logic: board rules, 3,000 random games replayed against a simple
+ * reference board, tactics, timing, cancellation, speed, game flow and playing strength.
  * Usage: java -cp build com.yuvraj.connect4.tests.TestRunner [--fast]
  */
 public final class TestRunner {
@@ -43,7 +44,7 @@ public final class TestRunner {
             int longs = 0;
             for (Field f : Board.class.getDeclaredFields()) {
                 if (Modifier.isStatic(f.getModifiers())) continue;
-                check(!f.getType().isArray(), "Board instance field '" + f.getName() + "' is an array; SPEC requires bitboards");
+                check(!f.getType().isArray(), "Board instance field '" + f.getName() + "' is an array; the board must be stored as bitboards");
                 if (f.getType() == long.class) longs++;
             }
             check(longs >= 2, "Board needs at least two long bitboard fields, found " + longs);

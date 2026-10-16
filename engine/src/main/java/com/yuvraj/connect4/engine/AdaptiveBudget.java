@@ -1,6 +1,9 @@
 package com.yuvraj.connect4.engine;
 
-/** Iteration budget that adapts to the player. See SPEC.md section 4. */
+/**
+ * Difficulty that adapts to the player: every human win doubles the AI's simulations per move, every AI win halves
+ * them, and draws change nothing. Kept between 100 and 50,000 so it never becomes trivial or unbeatable.
+ */
 public final class AdaptiveBudget {
     private static final long MIN = 100, MAX = 50000;
     private long iterations;

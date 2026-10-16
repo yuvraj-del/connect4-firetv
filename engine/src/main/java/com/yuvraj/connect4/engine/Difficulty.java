@@ -1,4 +1,4 @@
 package com.yuvraj.connect4.engine;
 
-/** Iteration budgets: EASY 300, MEDIUM 3000, HARD 30000. See SPEC.md section 3. */
+/** How hard the AI tries, as the number of games it simulates per move: Easy 300, Medium 3,000, Hard 30,000. */
 public enum Difficulty { EASY, MEDIUM, HARD }

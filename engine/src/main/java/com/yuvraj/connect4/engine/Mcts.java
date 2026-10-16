@@ -3,7 +3,27 @@ package com.yuvraj.connect4.engine;
 import java.util.SplittableRandom;
 import java.util.function.Consumer;
 
-/** Monte Carlo tree search. See SPEC.md section 2. */
+/**
+ * The AI: Monte Carlo tree search (MCTS) with the UCT selection rule.
+ *
+ * <p>Instead of hand-written rules about what makes a good Connect Four move, the AI learns by playing. Each
+ * iteration does four steps:
+ * <ol>
+ *   <li><b>Select:</b> walk down the tree of moves it has already explored, at each level picking the move with the best
+ *       balance of "has won a lot so far" and "hasn't been tried much yet" (the UCT formula, exploration constant 1.4).</li>
+ *   <li><b>Expand:</b> add one new, untried move to the tree.</li>
+ *   <li><b>Simulate:</b> finish the game from there with random moves.</li>
+ *   <li><b>Back-propagate:</b> walk back up, crediting a win (1), draw (0.5) or loss (0) to every move on the path,
+ *       each from the point of view of the player who made it.</li>
+ * </ol>
+ * After thousands of iterations the most-visited first move is the best one, and each column's win rate is what the
+ * TV draws as the live bars. Two safety rules always apply on top: take an immediate win, otherwise block the
+ * opponent's immediate win.
+ *
+ * <p>Built for a streaming stick: the search checks the clock every 64 iterations, reports progress to a callback
+ * (that's what animates the bars), stops promptly if its thread is interrupted, and caps the tree at
+ * {@link #MAX_NODES} nodes so a long search can't run out of memory.
+ */
 public final class Mcts {
     private static final double C = 1.4;
     private static final int CHECK_EVERY = 64;

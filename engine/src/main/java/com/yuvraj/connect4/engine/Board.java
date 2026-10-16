@@ -1,15 +1,40 @@
 package com.yuvraj.connect4.engine;
 
-/** Connect Four board stored as bitboards. See SPEC.md section 1. */
+/**
+ * A Connect Four board stored in two 64-bit numbers ("bitboards") instead of a grid.
+ *
+ * <p>Each column gets 7 bits: 6 for its cells (bit 0 = bottom row) plus one empty sentinel bit on top, so the
+ * board uses 49 bits of a {@code long}:
+ * <pre>
+ *   .  .  .  .  .  .  .     sentinel row (always 0)
+ *   5 12 19 26 33 40 47     top row
+ *   4 11 18 25 32 39 46
+ *   3 10 17 24 31 38 45
+ *   2  9 16 23 30 37 44
+ *   1  8 15 22 29 36 43
+ *   0  7 14 21 28 35 42     bottom row
+ * </pre>
+ * {@code mask} has a 1 for every disc on the board and {@code position} has a 1 for every disc of the player whose
+ * turn it is. That makes the expensive operations cheap:
+ * <ul>
+ *   <li><b>Dropping a disc:</b> adding a column's bottom bit to {@code mask} carries up to the first empty cell, so a
+ *       move is one addition and one OR, with no loop.</li>
+ *   <li><b>Checking four in a row:</b> shifting the board by 1 (vertical), 7 (horizontal), 6 or 8 (the diagonals) and
+ *       AND-ing it with itself finds every run of four in about a dozen bit operations. The sentinel row stops lines
+ *       from wrapping from one column into the next.</li>
+ *   <li><b>Switching turns:</b> {@code position ^= mask} turns "my discs" into "the other player's discs".</li>
+ * </ul>
+ * This is what lets the AI simulate hundreds of thousands of games a second.
+ */
 public final class Board {
     public static final int WIDTH = 7, HEIGHT = 6;
 
     private static final int COL_BITS = HEIGHT + 1;
     private static final long BOTTOM_ROW = 0b0000001_0000001_0000001_0000001_0000001_0000001_0000001L;
 
-    /** Stones of the player to move. */
+    /** Discs of the player whose turn it is (1 bit per disc). */
     private long position;
-    /** All stones. */
+    /** Every disc on the board, both players. */
     private long mask;
     private int moves;
     private int winner = -1;
@@ -27,6 +52,7 @@ public final class Board {
         winner = o.winner;
     }
 
+    /** Builds a board from a move list such as "4453", using 1-based columns (handy for tests). */
     public static Board fromMoves(String s) {
         if (s == null) throw new IllegalArgumentException("null moves");
         Board b = new Board();
@@ -54,13 +80,14 @@ public final class Board {
         if (isTerminal()) throw new IllegalStateException("game is over");
         if (col < 0 || col >= WIDTH) throw new IllegalArgumentException("column out of range: " + col);
         if ((mask & topBit(col)) != 0) throw new IllegalArgumentException("column full: " + col);
-        long newMask = mask | (mask + bottomBit(col));
+        long newMask = mask | (mask + bottomBit(col));   // the +1 carries up the column to the first empty cell
         if (hasFour(position | (newMask & columnMask(col) & ~mask))) winner = moves & 1;
         position ^= mask;           // switch perspective to the next player
         mask = newMask;
         moves++;
     }
 
+    /** True if the discs in {@code p} contain four in a row in any direction (see the class comment). */
     private static boolean hasFour(long p) {
         long m = p & (p >> COL_BITS);
         if ((m & (m >> (2 * COL_BITS))) != 0) return true;        // horizontal
@@ -117,5 +144,6 @@ public final class Board {
         return out;
     }
 
+    /** A unique number for this position (same discs, same player to move, same key). */
     public long key() { return position + mask + BOTTOM_ROW; }
 }
