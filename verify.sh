@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Compiles the engine + tests and runs the quality gates.
-# Exit 0 = all gates pass. Output is the failure report the loop feeds back to the fixer agent.
+# Exit 0 = every test passed; otherwise it prints which tests failed and why.
 # Usage: ./verify.sh [--fast]   (--fast skips the slow strength tests)
 set -uo pipefail
 cd "$(dirname "$0")"

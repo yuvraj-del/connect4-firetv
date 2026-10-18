@@ -1,5 +1,4 @@
 build/
-.loop/
 .gradle/
 app/build/
 local.properties
@@ -8,10 +7,3 @@ local.properties
 *.apk
 *.zip
 
-# local-only files
-CLAUDE.md
-LOOP_LOG.md
-SPEC.md
-loop.sh
-loop-run.out
-.claude/
