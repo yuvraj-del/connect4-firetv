@@ -3,7 +3,6 @@
 **A living-room Connect Four game for Fire TV, played with the remote, against an AI you can watch think.**
 While the AI searches, a bar above each column shows its live chance of winning there. After every move it says what it played and how confident it is.
 
-<!-- SCREENSHOT: main gameplay shot (AI thinking, bars visible). Save it as docs/screenshots/gameplay.png, then delete the comment markers around the next line. -->
 ![Connect Four AI running on the Android TV emulator](docs/screenshots/gameplay.png)
 
 <!-- DEMO VIDEO: paste the YouTube link below, then delete the comment markers. -->
@@ -53,11 +52,11 @@ flowchart LR
     R[Fire TV remote] --> A[MainActivity<br/>input + focus]
     A --> S[GameSession<br/>turns, scores, hints]
     S -- board copy --> W[Background thread<br/>Mcts search]
-    W -- snapshot every 60 ms --> V[BoardView<br/>Canvas drawing]
+    W -- search snapshots --> V[BoardView<br/>Canvas drawing]
     S --> V
     W --> B[Board<br/>bitboards]
 ```
-`GameSession` holds all game logic with no Android code, so it is tested on a plain JVM. The app and the tests compile the exact same engine source.
+The search reports about 18 snapshots of its progress, which the screen replays as the moving bars, so you can watch the AI change its mind even when the search itself takes only milliseconds. `GameSession` holds all game logic with no Android code, so it is tested on a plain JVM. The app and the tests compile the exact same engine source.
 
 ## Results
 Measured by the test suite on a laptop CPU:
