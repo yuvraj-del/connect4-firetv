@@ -5,8 +5,8 @@ While the AI searches, a bar above each column shows its live chance of winning 
 
 ![Connect Four AI running on the Android TV emulator](docs/screenshots/gameplay.png)
 
-<!-- DEMO VIDEO: paste the YouTube link below, then delete the comment markers. -->
-<!-- **[Watch the 2-minute demo](https://youtu.be/YOUR-VIDEO-ID)** -->
+DEMO VIDEO:
+**[Watch the demo](https://youtu.be/l8C8M1TspbA)**
 
 Built for Amazon's *Build, Ship, Shape* Developer Hackathon (Fire TV track), October 2026.
 
